@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 const BackgroundAudio = dynamic(() => import('../components/BackgroundAudio'), { ssr: false });
 const DailyQuiz = dynamic(() => import('../components/DailyQuiz'), { ssr: false });
 
-export default function HomePage() {
+function HomePage() {
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
 
@@ -88,3 +88,7 @@ export default function HomePage() {
     </main>
   );
 }
+
+// Ensure this page is rendered only on the client to avoid SSR/prerender issues
+export default dynamic(() => Promise.resolve(HomePage), { ssr: false });
+
