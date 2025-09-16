@@ -1,6 +1,7 @@
 
 "use client";
 
+import dynamic from 'next/dynamic';
 import { useEffect, useState, useRef, useCallback } from "react";
 import { db, auth } from "@/lib/firebase";
 import { doc, updateDoc, increment } from "firebase/firestore";
@@ -17,7 +18,7 @@ type HitEffect = { x: number; y: number; alpha: number };
 const GAME_DURATION = 60; // 60 seconds
 const STORAGE_KEY = 'dharmaquest_shown_facts';
 
-export default function ArjunaGamePage() {
+function ArjunaGamePage() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [user] = useAuthState(auth);
     const { toast } = useToast();
@@ -413,3 +414,4 @@ export default function ArjunaGamePage() {
         </div>
     );
 }
+export default dynamic(() => Promise.resolve(ArjunaGamePage), { ssr: false });
