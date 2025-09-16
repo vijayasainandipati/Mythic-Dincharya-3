@@ -15,9 +15,19 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-// Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
-const db = getFirestore(app);
+// Initialize Firebase on the client only to avoid Next.js prerender/SSR issues
+const app = typeof window !== 'undefined'
+  ? (!getApps().length ? initializeApp(firebaseConfig) : getApp())
+  // During build/prerender there is no window. We export a typed placeholder that
+  // is never used at runtime, keeping types intact without executing Firebase.
+  : (null as unknown as ReturnType<typeof initializeApp>);
+
+const auth = typeof window !== 'undefined'
+  ? getAuth(app)
+  : (null as unknown as ReturnType<typeof getAuth>);
+
+const db = typeof window !== 'undefined'
+  ? getFirestore(app)
+  : (null as unknown as ReturnType<typeof getFirestore>);
 
 export { app, auth, db };
